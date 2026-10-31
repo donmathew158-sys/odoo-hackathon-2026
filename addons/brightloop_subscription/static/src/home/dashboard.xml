@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="brightloop_subscription.Dashboard">
+        <div class="o_bl_dash">
+            <div class="o_bl_dash_head">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p class="o_bl_lead">Live figures from your subscriptions and invoices. Click a card to see the records behind it.</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" t-on-click="() => this.load()">Refresh</button>
+            </div>
+            <div class="o_bl_dash_grid">
+                <t t-foreach="state.cards" t-as="card" t-key="card.key">
+                    <div t-attf-class="o_bl_card #{card.tone ? 'o_bl_card_' + card.tone : ''}" t-on-click="() => this.open(card)">
+                        <div class="o_bl_card_title"><t t-esc="card.title"/></div>
+                        <t t-foreach="card.lines" t-as="line" t-key="line_index">
+                            <div class="o_bl_card_value"><t t-esc="line"/></div>
+                        </t>
+                        <div class="o_bl_card_hint">
+                            <t t-if="card.error">Could not load this figure.</t>
+                            <t t-else=""><t t-esc="card.hint"/></t>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>

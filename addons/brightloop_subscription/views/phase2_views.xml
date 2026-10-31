@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard (OWL client action), administrators only -->
+    <record id="action_brightloop_dashboard_home" model="ir.actions.client">
+        <field name="name">Dashboard</field>
+        <field name="tag">brightloop_dashboard</field>
+    </record>
+    <menuitem id="menu_brightloop_dashboard_home" name="Dashboard" parent="menu_brightloop_root"
+              action="action_brightloop_dashboard_home" sequence="2"
+              groups="group_brightloop_admin"/>
+
+    <!-- Plans as pricing cards -->
+    <record id="view_brightloop_plan_kanban" model="ir.ui.view">
+        <field name="name">brightloop.plan.kanban</field>
+        <field name="model">brightloop.plan</field>
+        <field name="arch" type="xml">
+            <kanban class="o_bl_kanban">
+                <field name="currency_id"/>
+                <field name="allow_pause"/>
+                <field name="allow_early_close"/>
+                <field name="allow_renew"/>
+                <field name="auto_close"/>
+                <templates>
+                    <t t-name="card">
+                        <strong class="fs-5"><field name="name"/></strong>
+                        <div class="o_bl_amount fs-3 mt-2"><field name="price" widget="monetary"/></div>
+                        <div class="text-muted">Billed <field name="interval"/></div>
+                        <div class="text-muted small mt-2">Minimum quantity: <field name="min_quantity"/></div>
+                        <div class="d-flex flex-wrap gap-1 mt-3">
+                            <span t-if="record.allow_pause.raw_value" class="badge text-bg-light border">Pause allowed</span>
+                            <span t-if="record.allow_early_close.raw_value" class="badge text-bg-light border">Early close allowed</span>
+                            <span t-if="record.allow_renew.raw_value" class="badge text-bg-light border">Renewable</span>
+                            <span t-if="record.auto_close.raw_value" class="badge text-bg-light border">Closes automatically</span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Invoice list: coloured payment status -->
+    <record id="view_brightloop_invoice_due_list_status" model="ir.ui.view">
+        <field name="name">brightloop.invoice.due.list.status</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="view_brightloop_invoice_due_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_state']" position="attributes">
+                <attribute name="decoration-success">payment_state in ('paid', 'in_payment')</attribute>
+                <attribute name="decoration-warning">payment_state in ('not_paid', 'partial')</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Invoice PDF: subscription details block -->
+    <template id="report_invoice_document_brightloop" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[hasclass('page')]" position="inside">
+            <div t-if="o.subscription_id" class="mt-4 p-3"
+                 style="border-left: 4px solid #2563eb; background-color: #f4f6fa;">
+                <strong>Subscription <span t-field="o.subscription_id.name"/></strong>
+                <div>Plan: <span t-field="o.subscription_id.plan_id.name"/></div>
+                <div t-if="o.period_start and o.period_end">
+                    Billing period: <span t-field="o.period_start"/> to <span t-field="o.period_end"/>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
