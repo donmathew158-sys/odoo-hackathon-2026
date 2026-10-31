@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===== Subscription form: plain language and next-step guidance ===== -->
+    <record id="view_brightloop_subscription_form_easy" model="ir.ui.view">
+        <field name="name">brightloop.subscription.form.easy</field>
+        <field name="model">brightloop.subscription</field>
+        <field name="inherit_id" ref="view_brightloop_subscription_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_confirm']" position="attributes">
+                <attribute name="string">Confirm Order</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_activate']" position="attributes">
+                <attribute name="string">Start Subscription</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_run_billing']" position="attributes">
+                <attribute name="string">Create Invoice Now</attribute>
+                <attribute name="class">btn-primary</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_close']" position="attributes">
+                <attribute name="string">Close Subscription</attribute>
+            </xpath>
+
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-danger" role="alert" invisible="not is_overdue">
+                    <strong>Payment overdue.</strong> This customer has an unpaid invoice past its due date.
+                    Open the Invoices button above to follow up.
+                </div>
+                <div class="alert alert-info" role="alert" invisible="state != 'draft'">
+                    <strong>Step 1 of 4.</strong> Choose the customer and the plan, add products under
+                    Products and Prices, then click <strong>Send Quotation</strong>.
+                </div>
+                <div class="alert alert-info" role="alert" invisible="state != 'quotation'">
+                    <strong>Step 2 of 4.</strong> The quotation is ready. When the customer agrees,
+                    click <strong>Confirm Order</strong>.
+                </div>
+                <div class="alert alert-info" role="alert" invisible="state != 'confirmed'">
+                    <strong>Step 3 of 4.</strong> Click <strong>Start Subscription</strong> to begin billing.
+                </div>
+                <div class="alert alert-success" role="alert" invisible="state != 'active'">
+                    <strong>Step 4 of 4. This subscription is running.</strong> Invoices are created
+                    automatically every day. Click <strong>Create Invoice Now</strong> to bill anything that is due today.
+                </div>
+                <div class="alert alert-warning" role="alert" invisible="state != 'paused'">
+                    <strong>Paused.</strong> No invoices are created while paused. Click <strong>Resume</strong> to continue.
+                </div>
+            </xpath>
+
+            <xpath expr="//group[@string='Customer']" position="attributes">
+                <attribute name="string">Customer and Plan</attribute>
+            </xpath>
+            <xpath expr="//field[@name='payment_term_id']" position="attributes">
+                <attribute name="string">Payment terms</attribute>
+            </xpath>
+            <xpath expr="//field[@name='start_date']" position="attributes">
+                <attribute name="string">Start date</attribute>
+            </xpath>
+            <xpath expr="//field[@name='expiry_date']" position="attributes">
+                <attribute name="string">End date (optional)</attribute>
+            </xpath>
+            <xpath expr="//field[@name='next_billing_date']" position="attributes">
+                <attribute name="string">Next invoice date</attribute>
+            </xpath>
+            <xpath expr="//page[@name='lines']" position="attributes">
+                <attribute name="string">Products and Prices</attribute>
+            </xpath>
+            <xpath expr="//page[@name='history']" position="attributes">
+                <attribute name="string">Status History</attribute>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/list/field[@name='unit_price']" position="attributes">
+                <attribute name="string">Price each</attribute>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/list/field[@name='price_subtotal']" position="attributes">
+                <attribute name="string">Amount</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ===== Plan screens ===== -->
+    <record id="view_brightloop_plan_form_easy" model="ir.ui.view">
+        <field name="name">brightloop.plan.form.easy</field>
+        <field name="model">brightloop.plan</field>
+        <field name="inherit_id" ref="view_brightloop_plan_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-info" role="alert">
+                    A plan says how much a customer pays and how often. The switches at the bottom decide
+                    what is allowed on subscriptions that use this plan.
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='price']" position="attributes">
+                <attribute name="string">Price per billing period</attribute>
+            </xpath>
+            <xpath expr="//field[@name='interval']" position="attributes">
+                <attribute name="string">Billed</attribute>
+            </xpath>
+            <xpath expr="//field[@name='min_quantity']" position="attributes">
+                <attribute name="string">Minimum quantity</attribute>
+            </xpath>
+            <xpath expr="//field[@name='start_date']" position="attributes">
+                <attribute name="string">Available from</attribute>
+            </xpath>
+            <xpath expr="//field[@name='end_date']" position="attributes">
+                <attribute name="string">Available until</attribute>
+            </xpath>
+            <xpath expr="//group[@string='Validity']" position="attributes">
+                <attribute name="string">Availability</attribute>
+            </xpath>
+            <xpath expr="//group[@string='Plan Rules']" position="attributes">
+                <attribute name="string">What is allowed</attribute>
+            </xpath>
+            <xpath expr="//field[@name='allow_pause']" position="attributes">
+                <attribute name="string">Customer can pause</attribute>
+            </xpath>
+            <xpath expr="//field[@name='allow_early_close']" position="attributes">
+                <attribute name="string">Customer can close early</attribute>
+            </xpath>
+            <xpath expr="//field[@name='allow_renew']" position="attributes">
+                <attribute name="string">Can be renewed</attribute>
+            </xpath>
+            <xpath expr="//field[@name='auto_close']" position="attributes">
+                <attribute name="string">Closes by itself at the end date</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_brightloop_plan_list_easy" model="ir.ui.view">
+        <field name="name">brightloop.plan.list.easy</field>
+        <field name="model">brightloop.plan</field>
+        <field name="inherit_id" ref="view_brightloop_plan_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='interval']" position="attributes">
+                <attribute name="string">Billed</attribute>
+            </xpath>
+            <xpath expr="//field[@name='allow_pause']" position="attributes">
+                <attribute name="string">Pause allowed</attribute>
+            </xpath>
+            <xpath expr="//field[@name='allow_renew']" position="attributes">
+                <attribute name="string">Renewal allowed</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ===== Discount rule and template: short explanations ===== -->
+    <record id="view_brightloop_discount_form_easy" model="ir.ui.view">
+        <field name="name">brightloop.discount.rule.form.easy</field>
+        <field name="model">brightloop.discount.rule</field>
+        <field name="inherit_id" ref="view_brightloop_discount_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-info" role="alert">
+                    Create a rule once and it is applied automatically to every new invoice that matches,
+                    until it expires or reaches its usage limit. Use <strong>Percentage</strong> for something
+                    like 10% off, or <strong>Fixed amount</strong> for an amount taken off each invoice.
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_brightloop_template_form_easy" model="ir.ui.view">
+        <field name="name">brightloop.quotation.template.form.easy</field>
+        <field name="model">brightloop.quotation.template</field>
+        <field name="inherit_id" ref="view_brightloop_template_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-info" role="alert">
+                    A template is a ready-made starting point. Choose a plan and add the product lines here,
+                    then pick the template when you create a new subscription and everything fills in.
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ===== Invoices menu ===== -->
+    <record id="action_brightloop_all_invoices" model="ir.actions.act_window">
+        <field name="name">Invoices</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('subscription_id', '!=', False), ('move_type', '=', 'out_invoice')]</field>
+        <field name="search_view_id" ref="view_brightloop_invoice_search"/>
+        <field name="context">{'default_move_type': 'out_invoice'}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_brightloop_invoice_due_list')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No invoices yet</p>
+            <p>Invoices appear here after a subscription is started and billed.</p>
+        </field>
+    </record>
+
+    <!-- ===== Getting Started page ===== -->
+    <record id="view_brightloop_guide_list" model="ir.ui.view">
+        <field name="name">brightloop.guide.list</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_brightloop_guide" model="ir.actions.act_window">
+        <field name="name">Getting Started</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[('id', '=', 0)]</field>
+        <field name="view_id" ref="view_brightloop_guide_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Welcome to Brightloop</p>
+            <p>Five steps from nothing to your first invoice:</p>
+            <ol style="text-align:left; display:inline-block;">
+                <li><strong>Plans:</strong> create a plan with its price and how often it bills.</li>
+                <li><strong>Subscriptions:</strong> click New, choose the customer and the plan, add products.</li>
+                <li>Click <strong>Send Quotation</strong>, then <strong>Confirm Order</strong>, then <strong>Start Subscription</strong>.</li>
+                <li>Click <strong>Create Invoice Now</strong>. Invoices are also created automatically every day.</li>
+                <li><strong>Invoices</strong> and <strong>Reports</strong> show what is paid, what is owed and what is overdue.</li>
+            </ol>
+            <p>Optional: <strong>Quotation Templates</strong> save time for repeat offers, and
+               <strong>Discount Rules</strong> apply discounts to invoices automatically.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_brightloop_guide" name="Getting Started" parent="menu_brightloop_root"
+              action="action_brightloop_guide" sequence="1"
+              groups="group_brightloop_staff,group_brightloop_admin"/>
+    <menuitem id="menu_brightloop_invoices" name="Invoices" parent="menu_brightloop_root"
+              action="action_brightloop_all_invoices" sequence="15"
+              groups="group_brightloop_admin,account.group_account_invoice"/>
+
+    <!-- ===== Menu order and names ===== -->
+    <record id="menu_brightloop_templates" model="ir.ui.menu">
+        <field name="name">Quotation Templates</field>
+    </record>
+    <record id="menu_brightloop_dashboard" model="ir.ui.menu">
+        <field name="name">Reports</field>
+        <field name="sequence">40</field>
+    </record>
+</odoo>
