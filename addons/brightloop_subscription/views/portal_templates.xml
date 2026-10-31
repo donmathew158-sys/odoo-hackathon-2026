@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_subscriptions" name="Subscriptions entry"
+              inherit_id="portal.portal_my_home" priority="35">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/account/static/src/img/Bill.svg'"/>
+                <t t-set="title">Subscriptions</t>
+                <t t-set="text">Your plans, billing and invoices</t>
+                <t t-set="url" t-value="'/my/subscriptions'"/>
+                <t t-set="placeholder_count" t-value="'subscription_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_subscriptions" name="My Subscriptions">
+        <t t-call="portal.portal_layout">
+            <h3 class="mb-3">My Subscriptions</h3>
+            <t t-if="not subscriptions">
+                <div class="alert alert-info">You have no subscriptions yet.</div>
+            </t>
+            <t t-else="">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Number</th>
+                                <th>Plan</th>
+                                <th>Status</th>
+                                <th>Next Billing</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="subscriptions" t-as="s">
+                                <td><a t-att-href="'/my/subscriptions/%s' % s.id" t-out="s.name"/></td>
+                                <td t-out="s.plan_id.name"/>
+                                <td><span class="badge text-bg-secondary" t-out="s.state.capitalize()"/></td>
+                                <td t-out="s.next_billing_date"/>
+                                <td class="text-end" t-out="s.amount_total"
+                                    t-options="{'widget': 'monetary', 'display_currency': s.currency_id}"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_subscription_detail" name="Subscription Detail">
+        <t t-call="portal.portal_layout">
+            <a href="/my/subscriptions">&#8592; All subscriptions</a>
+            <h3 class="mt-2" t-out="sub.name"/>
+            <div t-if="error" class="alert alert-danger" t-out="error"/>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>Plan:</strong> <span t-out="sub.plan_id.name"/></p>
+                    <p><strong>Status:</strong> <span class="badge text-bg-primary" t-out="sub.state.capitalize()"/></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Start date:</strong> <span t-out="sub.start_date"/></p>
+                    <p><strong>Expiry date:</strong> <span t-out="sub.expiry_date"/></p>
+                    <p><strong>Next billing:</strong> <span t-out="sub.next_billing_date"/></p>
+                </div>
+            </div>
+            <div class="mb-3">
+                <form t-if="sub.state == 'active' and sub.plan_id.allow_pause" method="post"
+                      t-attf-action="/my/subscriptions/#{sub.id}/action/pause" class="d-inline">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <button type="submit" class="btn btn-secondary">Pause</button>
+                </form>
+                <form t-if="sub.state == 'paused'" method="post"
+                      t-attf-action="/my/subscriptions/#{sub.id}/action/resume" class="d-inline">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <button type="submit" class="btn btn-primary">Resume</button>
+                </form>
+                <form t-if="sub.state in ('active', 'paused')" method="post"
+                      t-attf-action="/my/subscriptions/#{sub.id}/action/close" class="d-inline"
+                      onsubmit="return confirm('Close this subscription?');">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <button type="submit" class="btn btn-outline-danger">Close</button>
+                </form>
+            </div>
+            <h5>Items</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th class="text-end">Qty</th>
+                            <th class="text-end">Unit price</th>
+                            <th class="text-end">Discount %</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="sub.line_ids" t-as="l">
+                            <td t-out="l.product_id.display_name"/>
+                            <td class="text-end" t-out="l.quantity"/>
+                            <td class="text-end" t-out="l.unit_price"
+                                t-options="{'widget': 'monetary', 'display_currency': sub.currency_id}"/>
+                            <td class="text-end" t-out="l.discount"/>
+                            <td class="text-end" t-out="l.price_subtotal"
+                                t-options="{'widget': 'monetary', 'display_currency': sub.currency_id}"/>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-end">
+                <strong>Total: </strong>
+                <span t-out="sub.amount_total"
+                      t-options="{'widget': 'monetary', 'display_currency': sub.currency_id}"/>
+            </p>
+            <h5>Invoices</h5>
+            <t t-if="not invoices"><p class="text-muted">No invoices yet.</p></t>
+            <div t-else="" class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Invoice</th>
+                            <th>Period</th>
+                            <th>Due</th>
+                            <th>Payment</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="invoices" t-as="inv">
+                            <td><a t-att-href="inv.get_portal_url()" t-out="inv.name"/></td>
+                            <td><span t-out="inv.period_start"/> - <span t-out="inv.period_end"/></td>
+                            <td t-out="inv.invoice_date_due"/>
+                            <td t-out="inv.payment_state.replace('_', ' ').capitalize()"/>
+                            <td class="text-end" t-out="inv.amount_total"
+                                t-options="{'widget': 'monetary', 'display_currency': inv.currency_id}"/>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+</odoo>

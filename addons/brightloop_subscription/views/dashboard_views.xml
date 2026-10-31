@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_brightloop_invoice_graph" model="ir.ui.view">
+        <field name="name">brightloop.invoice.graph</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <graph string="Billed Revenue" type="bar">
+                <field name="invoice_date" interval="month"/>
+                <field name="amount_total_signed" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_brightloop_invoice_pivot" model="ir.ui.view">
+        <field name="name">brightloop.invoice.pivot</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <pivot string="Collections">
+                <field name="invoice_date" interval="month" type="row"/>
+                <field name="payment_state" type="col"/>
+                <field name="amount_total_signed" type="measure"/>
+                <field name="amount_residual_signed" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_brightloop_invoice_list" model="ir.ui.view">
+        <field name="name">brightloop.invoice.list</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="subscription_id"/>
+                <field name="invoice_date"/>
+                <field name="invoice_date_due"/>
+                <field name="amount_total_signed" sum="Total"/>
+                <field name="payment_state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_brightloop_revenue" model="ir.actions.act_window">
+        <field name="name">Billed Revenue</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="domain">[('subscription_id', '!=', False), ('move_type', '=', 'out_invoice'), ('state', '=', 'posted')]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'graph', 'view_id': ref('view_brightloop_invoice_graph')}),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_brightloop_invoice_pivot')}),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_brightloop_invoice_list')})]"/>
+    </record>
+
+    <record id="view_brightloop_mrr_graph" model="ir.ui.view">
+        <field name="name">brightloop.mrr.graph</field>
+        <field name="model">brightloop.subscription</field>
+        <field name="arch" type="xml">
+            <graph string="Monthly Recurring Revenue" type="bar">
+                <field name="plan_id"/>
+                <field name="monthly_recurring" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_brightloop_mrr_pivot" model="ir.ui.view">
+        <field name="name">brightloop.mrr.pivot</field>
+        <field name="model">brightloop.subscription</field>
+        <field name="arch" type="xml">
+            <pivot string="MRR">
+                <field name="plan_id" type="row"/>
+                <field name="customer_id" type="row"/>
+                <field name="monthly_recurring" type="measure"/>
+                <field name="amount_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_brightloop_mrr" model="ir.actions.act_window">
+        <field name="name">Monthly Recurring Revenue</field>
+        <field name="res_model">brightloop.subscription</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="domain">[('state', '=', 'active')]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'graph', 'view_id': ref('view_brightloop_mrr_graph')}),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_brightloop_mrr_pivot')})]"/>
+    </record>
+
+    <record id="action_brightloop_overdue" model="ir.actions.act_window">
+        <field name="name">Overdue Subscriptions</field>
+        <field name="res_model">brightloop.subscription</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_overdue', '=', True)]</field>
+    </record>
+
+    <menuitem id="menu_brightloop_dashboard" name="Dashboard" parent="menu_brightloop_root"
+              sequence="5" groups="group_brightloop_admin"/>
+    <menuitem id="menu_brightloop_dash_revenue" name="Billed Revenue" parent="menu_brightloop_dashboard"
+              action="action_brightloop_revenue" sequence="10" groups="group_brightloop_admin"/>
+    <menuitem id="menu_brightloop_dash_mrr" name="Monthly Recurring Revenue" parent="menu_brightloop_dashboard"
+              action="action_brightloop_mrr" sequence="20" groups="group_brightloop_admin"/>
+    <menuitem id="menu_brightloop_dash_overdue" name="Overdue" parent="menu_brightloop_dashboard"
+              action="action_brightloop_overdue" sequence="30" groups="group_brightloop_admin"/>
+</odoo>
