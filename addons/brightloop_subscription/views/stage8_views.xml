@@ -45,7 +45,7 @@
                 </div>
             </xpath>
 
-            <xpath expr="//group[@string='Customer']" position="attributes">
+            <xpath expr="//field[@name='customer_id']/parent::group" position="attributes">
                 <attribute name="string">Customer and Plan</attribute>
             </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="attributes">
@@ -102,10 +102,10 @@
             <xpath expr="//field[@name='end_date']" position="attributes">
                 <attribute name="string">Available until</attribute>
             </xpath>
-            <xpath expr="//group[@string='Validity']" position="attributes">
+            <xpath expr="//field[@name='start_date']/parent::group" position="attributes">
                 <attribute name="string">Availability</attribute>
             </xpath>
-            <xpath expr="//group[@string='Plan Rules']" position="attributes">
+            <xpath expr="//field[@name='allow_pause']/parent::group/parent::group" position="attributes">
                 <attribute name="string">What is allowed</attribute>
             </xpath>
             <xpath expr="//field[@name='allow_pause']" position="attributes">
