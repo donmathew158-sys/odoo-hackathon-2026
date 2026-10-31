@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_plan_staff,brightloop.plan staff,model_brightloop_plan,group_brightloop_staff,1,0,0,0
+access_plan_admin,brightloop.plan admin,model_brightloop_plan,group_brightloop_admin,1,1,1,1
