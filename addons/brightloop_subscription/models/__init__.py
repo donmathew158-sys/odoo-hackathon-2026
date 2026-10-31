@@ -6,3 +6,4 @@ from . import quotation_template
 from . import subscription_extra
 from . import discount_rule
 from . import subscription_discount
+from . import stage7

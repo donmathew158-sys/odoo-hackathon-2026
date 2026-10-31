@@ -1,6 +1,6 @@
 {
     "name": "Brightloop Subscription Management",
-    "version": "18.0.2.1.0",
+    "version": "18.0.2.2.0",
     "summary": "Subscriptions, recurring billing, discounts, payments, dashboard and portal",
     "category": "Sales",
     "author": "Team Brightloop",
@@ -16,6 +16,7 @@
         "views/extra_views.xml",
         "views/dashboard_views.xml",
         "views/discount_views.xml",
+        "views/stage7_views.xml",
         "views/portal_templates.xml",
         "data/password_data.xml",
     ],

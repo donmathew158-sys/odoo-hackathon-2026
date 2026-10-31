@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_brightloop_template_list_stage7" model="ir.ui.view">
+        <field name="name">brightloop.quotation.template.list.stage7</field>
+        <field name="model">brightloop.quotation.template</field>
+        <field name="inherit_id" ref="view_brightloop_template_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='duration_months']" position="after">
+                <field name="validity_days"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_brightloop_template_form_stage7" model="ir.ui.view">
+        <field name="name">brightloop.quotation.template.form.stage7</field>
+        <field name="model">brightloop.quotation.template</field>
+        <field name="inherit_id" ref="view_brightloop_template_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='duration_months']" position="after">
+                <field name="validity_days"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_brightloop_subscription_form_stage7" model="ir.ui.view">
+        <field name="name">brightloop.subscription.form.stage7</field>
+        <field name="model">brightloop.subscription</field>
+        <field name="inherit_id" ref="view_brightloop_subscription_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='expiry_date']" position="after">
+                <field name="quote_valid_until" invisible="state not in ('draft', 'quotation')"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_brightloop_invoice_graph_stage7" model="ir.ui.view">
+        <field name="name">brightloop.invoice.graph.stage7</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="view_brightloop_invoice_graph"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_total_signed']" position="attributes">
+                <attribute name="string">Billed Amount</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_brightloop_invoice_pivot_stage7" model="ir.ui.view">
+        <field name="name">brightloop.invoice.pivot.stage7</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="view_brightloop_invoice_pivot"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_total_signed']" position="attributes">
+                <attribute name="string">Billed Amount</attribute>
+            </xpath>
+            <xpath expr="//field[@name='amount_residual_signed']" position="attributes">
+                <attribute name="string">Still Owed</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_brightloop_invoice_due_list" model="ir.ui.view">
+        <field name="name">brightloop.invoice.due.list</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="subscription_id"/>
+                <field name="invoice_date"/>
+                <field name="invoice_date_due"/>
+                <field name="amount_total_signed" sum="Total"/>
+                <field name="amount_residual_signed" sum="Still owed"/>
+                <field name="payment_state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_brightloop_invoice_search" model="ir.ui.view">
+        <field name="name">brightloop.invoice.search</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="subscription_id"/>
+                <filter name="f_unpaid" string="Not fully paid"
+                        domain="[('payment_state', 'in', ('not_paid', 'partial'))]"/>
+                <filter name="f_overdue" string="Overdue"
+                        domain="[('payment_state', 'in', ('not_paid', 'partial')), ('invoice_date_due', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="f_paid" string="Paid"
+                        domain="[('payment_state', 'in', ('paid', 'in_payment'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_customer" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="g_status" string="Payment status" context="{'group_by': 'payment_state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_brightloop_active_subs" model="ir.actions.act_window">
+        <field name="name">Active Subscriptions</field>
+        <field name="res_model">brightloop.subscription</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'active')]</field>
+    </record>
+
+    <record id="action_brightloop_overdue_invoices" model="ir.actions.act_window">
+        <field name="name">Overdue Invoices</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('subscription_id', '!=', False), ('move_type', '=', 'out_invoice'), ('state', '=', 'posted')]</field>
+        <field name="search_view_id" ref="view_brightloop_invoice_search"/>
+        <field name="context">{'search_default_f_overdue': 1}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_brightloop_invoice_due_list')})]"/>
+    </record>
+
+    <record id="action_brightloop_outstanding" model="ir.actions.act_window">
+        <field name="name">Amount Outstanding</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('subscription_id', '!=', False), ('move_type', '=', 'out_invoice'), ('state', '=', 'posted'), ('payment_state', 'in', ('not_paid', 'partial'))]</field>
+        <field name="search_view_id" ref="view_brightloop_invoice_search"/>
+        <field name="context">{'search_default_g_customer': 1}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_brightloop_invoice_due_list')})]"/>
+    </record>
+
+    <record id="menu_brightloop_dash_overdue" model="ir.ui.menu">
+        <field name="name">Overdue Subscriptions</field>
+    </record>
+    <menuitem id="menu_brightloop_dash_active" name="Active Subscriptions"
+              parent="menu_brightloop_dashboard" action="action_brightloop_active_subs"
+              sequence="5" groups="group_brightloop_admin"/>
+    <menuitem id="menu_brightloop_dash_overdue_inv" name="Overdue Invoices"
+              parent="menu_brightloop_dashboard" action="action_brightloop_overdue_invoices"
+              sequence="40" groups="group_brightloop_admin"/>
+    <menuitem id="menu_brightloop_dash_outstanding" name="Amount Outstanding"
+              parent="menu_brightloop_dashboard" action="action_brightloop_outstanding"
+              sequence="50" groups="group_brightloop_admin"/>
+</odoo>
