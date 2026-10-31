@@ -12,6 +12,7 @@
         "data/sequence.xml",
         "views/plan_views.xml",
         "views/subscription_views.xml",
+        "data/billing_data.xml",
     ],
     "application": True,
     "installable": True,
