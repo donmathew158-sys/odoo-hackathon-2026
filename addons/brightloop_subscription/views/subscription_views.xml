@@ -176,7 +176,7 @@
     <record id="action_brightloop_subscription" model="ir.actions.act_window">
         <field name="name">Subscriptions</field>
         <field name="res_model">brightloop.subscription</field>
-        <field name="view_mode">list,form,graph,pivot</field>
+        <field name="view_mode">list,kanban,form,graph,pivot</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Create your first subscription</p>
             <p>Pick a customer and a plan, add lines, then confirm and activate it to start billing.</p>

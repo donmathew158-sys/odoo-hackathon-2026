@@ -1,6 +1,6 @@
 {
     "name": "Brightloop Subscription Management",
-    "version": "18.0.2.3.0",
+    "version": "18.0.2.4.0",
     "summary": "Subscriptions, recurring billing, discounts, payments, dashboard and portal",
     "category": "Sales",
     "author": "Team Brightloop",
@@ -17,10 +17,21 @@
         "views/dashboard_views.xml",
         "views/discount_views.xml",
         "views/stage7_views.xml",
+        "views/ui_views.xml",
         "views/stage8_views.xml",
         "views/portal_templates.xml",
         "data/password_data.xml",
     ],
+    "assets": {
+        "web._assets_primary_variables": [
+            "brightloop_subscription/static/src/scss/primary_variables.scss",
+        ],
+        "web.assets_backend": [
+            "brightloop_subscription/static/src/scss/brightloop.scss",
+            "brightloop_subscription/static/src/home/home.js",
+            "brightloop_subscription/static/src/home/home.xml",
+        ],
+    },
     "application": True,
     "installable": True,
 }

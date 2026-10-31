@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_brightloop_home" model="ir.actions.client">
+        <field name="name">Getting Started</field>
+        <field name="tag">brightloop_home</field>
+    </record>
+    <record id="view_brightloop_subscription_kanban" model="ir.ui.view">
+        <field name="name">brightloop.subscription.kanban</field>
+        <field name="model">brightloop.subscription</field>
+        <field name="arch" type="xml">
+            <kanban class="o_bl_kanban" default_group_by="state" records_draggable="0"
+                    group_create="0" group_delete="0" group_edit="0" quick_create="0">
+                <field name="state"/>
+                <field name="is_overdue"/>
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <strong><field name="name"/></strong>
+                            <span t-if="record.is_overdue.raw_value" class="badge text-bg-danger">Overdue</span>
+                        </div>
+                        <div class="text-muted"><field name="customer_id"/></div>
+                        <div><field name="plan_id"/></div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span class="o_bl_amount"><field name="amount_total" widget="monetary"/></span>
+                            <span class="text-muted small"><field name="next_billing_date"/></span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+</odoo>

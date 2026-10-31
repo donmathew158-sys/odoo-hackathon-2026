@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="brightloop_subscription.Home">
+        <div class="o_bl_home">
+            <aside class="o_bl_sidebar">
+                <div class="o_bl_brand"><span class="o_bl_logo">B</span><span>Brightloop</span></div>
+                <nav>
+                    <t t-foreach="state.items" t-as="item" t-key="item.id">
+                        <a t-if="item.actionID" href="#"
+                           t-attf-class="o_bl_nav_item #{item.sub ? 'o_bl_sub' : ''}"
+                           t-on-click.prevent="() => this.open(item.menu)">
+                            <t t-esc="item.name"/>
+                        </a>
+                        <div t-else="" class="o_bl_nav_heading"><t t-esc="item.name"/></div>
+                    </t>
+                </nav>
+            </aside>
+            <main class="o_bl_main">
+                <h1>Welcome to Brightloop</h1>
+                <p class="o_bl_lead">Five steps from nothing to your first invoice.</p>
+                <t t-foreach="state.steps" t-as="step" t-key="step.index">
+                    <div class="o_bl_step">
+                        <div class="o_bl_num"><t t-esc="step.index"/></div>
+                        <div>
+                            <div class="o_bl_step_title"><t t-esc="step.title"/></div>
+                            <div class="o_bl_step_text"><t t-esc="step.text"/></div>
+                            <button t-if="step.target and step.button" class="btn btn-primary btn-sm"
+                                    t-on-click="() => this.open(step.target)">
+                                <t t-esc="step.button"/>
+                            </button>
+                        </div>
+                    </div>
+                </t>
+                <p class="text-muted mt-3">Optional: Quotation Templates save time for repeat offers, and Discount Rules apply discounts to invoices automatically.</p>
+            </main>
+        </div>
+    </t>
+</templates>

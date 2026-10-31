@@ -219,7 +219,7 @@
     </record>
 
     <menuitem id="menu_brightloop_guide" name="Getting Started" parent="menu_brightloop_root"
-              action="action_brightloop_guide" sequence="1"
+              action="action_brightloop_home" sequence="1"
               groups="group_brightloop_staff,group_brightloop_admin"/>
     <menuitem id="menu_brightloop_invoices" name="Invoices" parent="menu_brightloop_root"
               action="action_brightloop_all_invoices" sequence="15"
