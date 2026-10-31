@@ -1,3 +1,9 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_plan_staff,brightloop.plan staff,model_brightloop_plan,group_brightloop_staff,1,0,0,0
 access_plan_admin,brightloop.plan admin,model_brightloop_plan,group_brightloop_admin,1,1,1,1
+access_sub_staff,brightloop.subscription staff,model_brightloop_subscription,group_brightloop_staff,1,1,1,0
+access_sub_admin,brightloop.subscription admin,model_brightloop_subscription,group_brightloop_admin,1,1,1,1
+access_subline_staff,brightloop.subscription.line staff,model_brightloop_subscription_line,group_brightloop_staff,1,1,1,1
+access_subline_admin,brightloop.subscription.line admin,model_brightloop_subscription_line,group_brightloop_admin,1,1,1,1
+access_subhist_staff,brightloop.subscription.history staff,model_brightloop_subscription_history,group_brightloop_staff,1,0,1,0
+access_subhist_admin,brightloop.subscription.history admin,model_brightloop_subscription_history,group_brightloop_admin,1,1,1,1
